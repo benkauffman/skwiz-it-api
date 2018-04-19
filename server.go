@@ -1,7 +1,6 @@
 package main
 
 import (
-	"./config"
 	"./handler"
 	"./middleware"
 
@@ -12,8 +11,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
-
-var conf = config.LoadConfig()
 
 func main() {
 	listen := "0.0.0.0:3000"
