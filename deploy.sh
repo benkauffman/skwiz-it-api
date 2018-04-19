@@ -5,6 +5,8 @@ set -e #exit on errors
 
 echo "Running deploy.sh"
 
+_IMAGE_NAME="skwiz-it-api"
+
 echo "Example parameters to pass to this shell script..."
 echo "./deploy.sh skwiz-it-api skwiz.it api development@developmentnow.com y"
 
@@ -87,10 +89,16 @@ VIRTUAL_HOST="${SUB_DOMAIN}.${DOMAIN}"
 echo "Deploying ${NAME} and binding to ${VIRTUAL_HOST}..."
 
 _DOCKER_TAG=$(git rev-parse --short HEAD)
-_DOCKER_IMAGE_NAME="${NAME}:${_DOCKER_TAG}"
+_DOCKER_IMAGE_NAME="${_IMAGE_NAME}:${_DOCKER_TAG}"
 
-# Building docker image
-docker build -t ${_DOCKER_IMAGE_NAME} .
+_IMAGE_EXISTS=$(docker images -q ${_DOCKER_IMAGE_NAME} 2> /dev/null);
+if [[ "${_IMAGE_EXISTS}" == "" ]]; then
+    echo "Creating docker image ${_DOCKER_IMAGE_NAME}"
+    docker build -t ${_DOCKER_IMAGE_NAME} .
+  else
+    echo "Using existing docker image ${_DOCKER_IMAGE_NAME}"
+fi
+
 
 set +e
 docker rm -f ${NAME}
